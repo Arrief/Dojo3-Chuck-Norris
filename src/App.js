@@ -2,21 +2,26 @@ import "./App.css"
 import React, {useState, useEffect} from "react"; 
 
 function App() {
-  let [joke, setJoke] = useState({});
-  let [joke2, setJoke2] = useState({});
+  let [joke, setJoke] = useState("");
+  let [joke2, setJoke2] = useState("");
   let [winner, setWinner] = useState("");
 
   function refresh() {
     fetch("https://api.chucknorris.io/jokes/random")
       .then((response) => response.json())
       .then((data) => {
-        setJoke(data);
+        setJoke(data.value);
+        fetch("https://api.chucknorris.io/jokes/random")
+          .then((response) => response.json())
+          .then((data2) => {
+            setJoke2(data2.value);
+        });
       });
-    fetch("https://api.chucknorris.io/jokes/random")
-      .then((response) => response.json())
-      .then((data) => {
-          setJoke2(data);
-      });
+    // fetch("https://api.chucknorris.io/jokes/random")
+    //   .then((response) => response.json())
+    //   .then((data) => {
+    //       setJoke2(data.value);
+    //   });
     setWinner("");
   }
 
@@ -24,24 +29,20 @@ function App() {
     refresh();
   }, []);
 
-  const handleClick1 = () => {
-    setWinner(joke.value);
-  };
-
-  const handleClick2 = () => {
-    setWinner(joke2.value);
+  const handleClick = (selectedJoke) => {
+    setWinner(selectedJoke);
   };
 
 
   return (
     <div className="App">
       <h1>React project</h1>
-      <p>This is Chucks first joke: {joke.value}</p>
-      <button onClick={handleClick1}> Select this joke!</button>
-      <p>This is his second joke: {joke2.value}</p>
-      <button onClick={handleClick2}> Select this joke!</button>
+      <p>This is Chucks first joke: {joke}</p>
+      <button onClick={() => handleClick(joke)}> Select this joke!</button>
+      <p>This is his second joke: {joke2}</p>
+      <button onClick={() => handleClick(joke2)}> Select this joke!</button>
       <h1>The funniest joke was: {winner}</h1>
-      <button onClick={() => refresh()}>Refresh</button>
+      <button onClick={refresh}>Refresh</button>
     </div>
   );
 }
